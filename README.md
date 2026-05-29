@@ -218,6 +218,7 @@ Relationship to go-sd-jwt: This library implements the SD-JWT-VC credential prof
 | Three roles | Partial — no distinct Issuer/Holder/Verifier types | Explicit Issuer, Holder, Verifier types 
 | VerificationResult | GetDisclosedClaims() returns a map | Structured result with DisclosedClaims, AllClaims, Issuer, VCT, KeyBound |
 | Issuer signing | Not present — you bring your own JWT | Issuer.Issue() builds and signs the full token |
+| Nested structured SD-JWTs | Supported | Supported — `StructuredClaim` / `sdjwt.Structured()` with depth limit |
 | Decoy digests | Not present | WithDecoyDigests(n) option |
 | Schema URI| Not present | WithSchemaURI() → vct#integrity |
 | Typed errors | Not present | VerificationError{Stage, Err}, DisclosureError{Key, Err} |
@@ -232,7 +233,7 @@ Where MichaelFraser99 is ahead
 ### To be fair about it:
 
 * Battle-tested — it has been used in production, has a playground at sdjwt.org, and has real-world adoption. Yours is new.
-* Structured SD-JWTs — nested/recursive selective disclosure. 
+* ~~Structured SD-JWTs — nested/recursive selective disclosure.~~ (now implemented — see `StructuredClaim` / `sdjwt.Structured()`)
 * NewFromComponents — lets you construct an SdJwt from already-split parts, useful when the transport layer has already parsed the token. A useful low-level escape hatch.
 * Salt injection — the salt *string parameter on NewFromObject lets callers supply their own salt Go Packages, which is useful for deterministic test vectors.
 
@@ -244,7 +245,7 @@ Where MichaelFraser99 is ahead
 * Integration seam — the Signer / CredentialValidator / Presenter interfaces are designed to snap into go-oid4vci and go-oid4vp.
 * VerificationError{Stage} — machine-readable failure stages for audit logging.
 
-The nested structured SD-JWT support is the main functional gap. Worth adding a WithStructuredClaims option to Issuer.Issue that recurses into nested maps and makes sub-objects selectively disclosable. That closes the last real feature gap between the two.
+Nested structured SD-JWT support has been implemented via `StructuredClaim` and `sdjwt.Structured()`. The remaining gaps are `NewFromComponents` (construct from pre-split parts) and salt injection for deterministic test vectors.
 
 
 ## License
