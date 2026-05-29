@@ -209,7 +209,7 @@ Supported algorithms: ES256, ES384, ES512, RS256, RS384, RS512, PS256, PS384, PS
 
 Relationship to go-sd-jwt: This library implements the SD-JWT-VC credential profile (draft-ietf-oauth-sd-jwt-vc) rather than the base SD-JWT specification. If you need only the low-level SD-JWT primitive, https://github.com/MichaelFraser99/go-sd-jwt is an excellent choice. This library adds the Verifiable Credential layer — vct, cnf, holder key binding at issuance, a KeyResolver for verifier-side JWKS lookup, and the Issuer/Holder/Verifier role separation required by OID4VCI and OID4VP.
 
-| Concern | Michael Fraser99 go-sd-jwt | Your go-sd-jwt-vc|
+| Concern | Michael Fraser99 go-sd-jwt | go-sd-jwt-vc|
 |---|---|---|
 | Spec |draft-ietf-oauth-selective-disclosure-jwt | draft-ietf-oauth-sd-jwt-vc |
 | vct claim | Not present | First-class — required, validated |
@@ -232,16 +232,16 @@ Where MichaelFraser99 is ahead
 ### To be fair about it:
 
 * Battle-tested — it has been used in production, has a playground at sdjwt.org, and has real-world adoption. Yours is new.
-* Structured SD-JWTs — nested/recursive selective disclosure. Yours currently handles flat claim maps only.
-* NewFromComponents — lets you construct an SdJwt from already-split parts, useful when the transport layer has already parsed the token. A useful low-level escape hatch yours doesn't have yet.
-* Salt injection — the salt *string parameter on NewFromObject lets callers supply their own salt Go Packages, which is useful for deterministic test vectors. Yours always generates a random salt.
+* Structured SD-JWTs — nested/recursive selective disclosure. 
+* NewFromComponents — lets you construct an SdJwt from already-split parts, useful when the transport layer has already parsed the token. A useful low-level escape hatch.
+* Salt injection — the salt *string parameter on NewFromObject lets callers supply their own salt Go Packages, which is useful for deterministic test vectors.
 
-### Where yours is ahead
+### Where this project is ahead
 
-* The VC profile — vct, cnf, schema integrity, the full issuer JWT construction. This is the gap that matters for your mortgage PoC and for the OID4VCI/OID4VP suite.
+* The VC profile — vct, cnf, schema integrity, the full issuer JWT construction. This is the gap that matters for the OID4VCI/OID4VP suite.
 * Role separation — having distinct Issuer, Holder, and Verifier types makes the library self-documenting for implementors building wallet or relying-party services.
 * KeyResolver with JWKS caching — production-ready key resolution against live issuers.
-* Integration seam — the Signer / CredentialValidator / Presenter interfaces are designed to snap into go-oid4vci and go-oid4vp. MichaelFraser99 has no equivalent.
+* Integration seam — the Signer / CredentialValidator / Presenter interfaces are designed to snap into go-oid4vci and go-oid4vp.
 * VerificationError{Stage} — machine-readable failure stages for audit logging.
 
 The nested structured SD-JWT support is the main functional gap. Worth adding a WithStructuredClaims option to Issuer.Issue that recurses into nested maps and makes sub-objects selectively disclosable. That closes the last real feature gap between the two.
