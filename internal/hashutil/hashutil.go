@@ -11,6 +11,20 @@ import (
 	"hash"
 )
 
+// HashForAlg is a named wrapper around crypto.Hash used by signature
+// verification functions in the verifier.
+type HashForAlg crypto.Hash
+
+// CryptoHash returns the underlying crypto.Hash value.
+func (h HashForAlg) CryptoHash() crypto.Hash { return crypto.Hash(h) }
+
+// Pre-declared algorithm values used by verifier.go.
+const (
+	SHA256Alg HashForAlg = HashForAlg(crypto.SHA256)
+	SHA384Alg HashForAlg = HashForAlg(crypto.SHA384)
+	SHA512Alg HashForAlg = HashForAlg(crypto.SHA512)
+)
+
 // AlgorithmFromSDAlg maps the _sd_alg string from an SD-JWT to a
 // [crypto.Hash]. Only the algorithms mandated by the spec are supported.
 func AlgorithmFromSDAlg(alg string) (crypto.Hash, error) {
